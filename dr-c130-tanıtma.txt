@@ -1,0 +1,143 @@
+CANON DR-C130 imageFORMULA İÇİN DRİVER KURULUMU
+Hazırlayan: Yahya YILDIRIM (Mardin İdari ve Mali İşler Şube Müdürü)
+E-posta: yahya.yldrm@gmail.com
+Telegram: t.me/yahyayildirim
+GitHub: github.com/yahyayildirim
+
+
+1. ADIM (DİYANET DEPOSU EKLEME)
+#######################################################
+sudo apt-get install apt-transport-https
+sudo wget -qO- http://depo.diyanet.gov.tr/pardus/profelis_diyanet.key | sudo apt-key add -
+echo 'deb [Trusted=yes] http://depo.diyanet.gov.tr/pardus/ ondokuz main' | sudo tee /etc/apt/sources.list.d/diyanet.list
+#######################################################
+
+
+2. Adım (32 BİT MİMARİ DESTEĞİNİ AÇALIM)
+#######################################################
+sudo dpkg --add-architecture i386
+#######################################################
+
+
+3. Adım (GÜNCELLEME KONTROLÜ YAPALIM)
+#######################################################
+sudo apt update && sudo apt full-upgrade -y
+#######################################################
+
+
+4. Adım
+#######################################################
+/tmp klasörününün izinlerini değiştirelim.
+sudo chmod 777 -R /tmp
+#######################################################
+
+
+5. Adım (SÜRÜCÜ YÜKLEME)
+#######################################################
+Bu adresten sürücüyü indirin.
+https://www.canon-europe.com/support/products/document-scanners/dr-series/imageformula-dr-c130.html?type=drivers&language=en&os=linux
+
+zip'ten çıkartın ve .deb dosyasının olduğu yerde sağ tıklayıp Uçbirimde Aç deyin ve aşağıdaki kodu çalıştırın.
+sudo apt install ./cndrvsane-drc130_1.00-0.3_i386.deb
+
+İhtiyaten bu kodu da çalıştırın. (sudo apt install -f)
+#######################################################
+
+
+6. Adım (BAĞIMLILIKLARI YÜKLEME)
+#######################################################
+sudo apt install libglade2-0 libcanberra-gtk-module apparmor-utils libatk1.0-0:i386 libcairo2:i386 libgtk2.0-0:i386 libpango1.0-0:i386 libstdc++6:i386 libpopt0:i386 libxml2:i386 libc6:i386 gnome-tweak-tool libusb-0.1-4 libtool libsane1 libsane-dev libsane sane xsane
+#######################################################
+
+
+7. ADIM
+#######################################################
+/etc/sane.d/canondr.conf dosyasını kontrol edin eğer aşağıdaki kod yoksa ekleyin
+
+# DR-C130
+option model DR-C130
+option type "sheetfed scanner"
+option backend canondr_backendc130
+usb 0x1083 0x164a
+
+#######################################################
+
+
+8. ADIM
+#######################################################
+/usr/lib/udev/rules.d/60-libsane.rules dosyasına aşağıdaki kodu ekleyin
+
+# Canon DR-C130
+ATTR{idVendor}=="1083", ATTR{idProduct}=="164a", MODE="0666", GROUP="scanner", ENV{libsane_matched}="yes"
+
+#######################################################
+
+
+9.Adım
+#######################################################
+/etc/sane.d/dll.conf dosyasının yedeğini alın.
+sudo cp /etc/sane.d/dll.conf /etc/sane.d/dll.conf.yedek
+
+sonra /etc/sane.d/dll.conf dosyasını açın ve "canondr" ibaresini bir satıra ekleyin.(Tırnaklar hariç)
+#######################################################
+
+
+10.Adım
+#######################################################
+sudo apt install --reinstall cndrvsane-drc240
+#######################################################
+
+
+11. Adım
+#######################################################
+ls -l /usr/lib/x86_64-linux-gnu/sane | grep canondr
+çıktının aşağıdaki sonucu vermesi lazım.
+
+libsane-canondr.so -> /opt/Canon/lib/sane/libsane-canondr.so.1.0.0
+libsane-canondr.so.1 -> /opt/Canon/lib/sane/libsane-canondr.so.1.0.0
+libsane-canondr.so.1.0.0 -> /opt/Canon/lib/sane/libsane-canondr.so.1.0.0
+#######################################################
+
+
+12. Adım
+#######################################################
+SANE_DEBUG_DLL=255 scanimage -L
+çıktısının aşağıdaki sonucu vermesi lazım.
+
+[sanei_debug] Setting debug level of dll to 255.
+[dll] sane_init: SANE dll backend version 1.0.13 from sane-backends 1.0.27
+[dll] sane_init/read_dlld: attempting to open directory `./dll.d'
+[dll] sane_init/read_dlld: attempting to open directory `/etc/sane.d/dll.d'
+[dll] sane_init/read_dlld: using config directory `/etc/sane.d/dll.d'
+[dll] sane_init/read_dlld: done.
+[dll] sane_init/read_config: reading dll.conf
+[dll] add_backend: adding backend `canondr'
+[dll] sane_get_devices
+[dll] load: searching backend `canondr' in `/usr/lib/x86_64-linux-gnu/sane:/usr/lib/sane'
+[dll] load: trying to load `/usr/lib/x86_64-linux-gnu/sane/libsane-canondr.so.1'
+[dll] load: dlopen()ing `/usr/lib/x86_64-linux-gnu/sane/libsane-canondr.so.1'
+[dll] init: initializing backend `canondr'
+[dll] init: backend `canondr' is version 1.0.1
+[dll] sane_get_devices: found 1 devices
+device `canondr:libusb:001:007' is a Canon DR-C130 sheetfed scanner
+[dll] sane_exit: exiting
+[dll] sane_exit: calling backend `canondr's exit function
+[dll] sane_exit: finished
+#######################################################
+
+
+13. Adım
+#######################################################
+xsane programını çalıştırdığınızda tarayıcıyı görmesi gerekiyor.
+şayet görmüyor ise aşağıdaki kodu çalıştırın.
+
+sudo rm -rf /usr/lib/x86_64-linux-gnu/sane/libsane-canondr*
+
+sonra bu kodu çalıştırın.
+
+sudo apt install --reinstall cndrvsane-drc240
+#######################################################
+
+
+
+
