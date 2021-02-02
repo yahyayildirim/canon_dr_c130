@@ -7,3 +7,10 @@ Canon DR-C130 imageFORMULA Tarayıcısının PARDUS'ta çalışması için hazı
 * Kurulumdan önce mutlaka `sudo dpkg --add-architecture i386 && sudo apt update` kodunu çalıştırın.
 * Daha sonra DEB dosyasının olduğu dizinde `sudo apt install -f ./cndrvsane-drc130_fixed.deb` komutunu çalıştırın.
 * xsane programını açtığınızda size iki seçenek sunabilir. Siz `Canon DRC130 sheetfed scanner` olanı seçmelisiniz.
+
+### TARAYICI SEÇ:
+![SEÇİM EKRANI](https://github.com/yahyayildirim/canon_dr_c130/blob/main/canon_drc130_secim_ekrani.jpg)
+
+
+# ÖNEMLİ NOT:
+Her seferinde bu seçim ekranını görmek istemiyorsanız. /etc/sane.d/dll.conf dosyasının içinde canon_dr satırını bulup başına # işareti koyun.
